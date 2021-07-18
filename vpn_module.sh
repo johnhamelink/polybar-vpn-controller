@@ -57,8 +57,6 @@ VPN_LOCATIONS=("us sea" "us chi" "us nyc" "us" "jp" "au" "fr" "br")
 icon_connect=
 icon_fav=
 icon_country=
-rofi_font="icomoon-feather 15"
-rofi_theme="solarized_alternate"
 rofi_location="-location 5 -xoffset -200 -yoffset -50"
 rofi_menu_name="$VPN_PROVIDER VPN"
 
@@ -93,19 +91,19 @@ vpn_report() {
 		if [ "$@" ] && [ "$1" == "--no-geoip" ]; then
 			country=$($VPN_GET_STATUS | awk 'tolower ($0) ~ /country/{print $2}')
 			city=$($VPN_GET_STATUS | awk 'tolower ($0) ~ /country/{print $2}')
-			echo " %{F$COLOR_CONNECTED}$city $country%{F-}"
+			echo "$city $country"
 		elif hash geoiplookup 2>/dev/null; then
 			ip_address=$(ip_address_lookup)
 			country=$(geoiplookup "$ip_address" | head -n1 | cut -c24-25)
 			city=$(geoiplookup "$ip_address" | cut -d',' -f5 | sed -n '2{p;q}' | sed 's/^ //')
-			echo " %{F$COLOR_CONNECTED}$city $country%{F-}"
+			echo "${city} ${country}"
 		else
-			echo " %{F$COLOR_CONNECTED}$(ip_address_lookup)%{F-}"
+			ip_address_lookup
 		fi
 	elif [ "$VPN_STATUS" = "$CONNECTING" ]; then
-		echo " %{F$COLOR_CONNECTING}Connecting...%{F-}"
+		echo "Connecting..."
 	else
-		echo " %{F$COLOR_DISCONNECTED}No VPN%{F-}"
+		echo "Disconnected"
 	fi
 }
 
@@ -128,7 +126,7 @@ vpn_location_menu() {
 		## shellcheck throws errors here, but the globbing is intentional
 		# shellcheck disable=SC2086
 		MENU="$(rofi \
-			-font "$rofi_font" -theme "$rofi_theme" $rofi_location \
+			$rofi_location \
 			-columns 1 -width 10 -hide-scrollbar \
 			-line-padding 4 -padding 20 -lines 9 \
 			-sep "|" -dmenu -i -p "$rofi_menu_name" <<< \

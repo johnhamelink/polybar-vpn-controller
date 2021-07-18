@@ -5,7 +5,7 @@ Manage your VPN via this polybar module. The module reports the VPN's status in 
 - right-click: optional rofi menu to select between locations
 - middle-click: copy your public IP address to the clipboard
 
-![](vpn-module-demo.gif)
+![](docs/vpn-module-demo.gif)
 
 ###### (The polybar theme seen in the gif was modified from polybar-5 provided by [Aditya Shakya](https://github.com/adi1090x/polybar-themes) and originally designed by [Benedikt Vollmerhaus](https://gitlab.com/BVollmerhaus))
 
