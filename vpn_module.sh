@@ -57,7 +57,6 @@ VPN_LOCATIONS=("us sea" "us chi" "us nyc" "us" "jp" "au" "fr" "br")
 icon_connect=
 icon_fav=
 icon_country=
-rofi_location="-location 5 -xoffset -200 -yoffset -50"
 rofi_menu_name="$VPN_PROVIDER VPN"
 
 
@@ -126,7 +125,6 @@ vpn_location_menu() {
 		## shellcheck throws errors here, but the globbing is intentional
 		# shellcheck disable=SC2086
 		MENU="$(rofi \
-			$rofi_location \
 			-columns 1 -width 10 -hide-scrollbar \
 			-line-padding 4 -padding 20 -lines 9 \
 			-sep "|" -dmenu -i -p "$rofi_menu_name" <<< \
