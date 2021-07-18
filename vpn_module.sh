@@ -44,19 +44,10 @@ VPN_STATUS="$($VPN_GET_STATUS | grep -Eio 'connected|connecting|disconnected' \
 CONNECTED="connected"
 CONNECTING="connecting"
 
-## [Set colors] (set each variable to nothing for default color)
-COLOR_CONNECTED="#00CC66"
-COLOR_CONNECTING="#FFFF00"
-COLOR_DISCONNECTED="#FF3300"
-
-## [Set 8 favorite VPN locations]
-# These are passed to your VPN as `$VPNCOMMAND_RELAY_SET_LOCATION <input>`.
-VPN_LOCATIONS=("us sea" "us chi" "us nyc" "us" "jp" "au" "fr" "br")
-
 ## [Set optional rofi menu style]. `man rofi` for help.
-icon_connect=
-icon_fav=
-icon_country=
+icon_connect=""
+icon_fav=""
+icon_country=""
 rofi_menu_name="$VPN_PROVIDER VPN"
 
 
@@ -69,8 +60,7 @@ COUNTRIES=("Albania (al)" "Australia (au)" "Austria (at)" "Belgium (be)" "Brazil
 COUNTRY_CODES=("al" "au" "at" "be" "br" "bg" "ca" "cz" "dk" "fi" "fr" "de" "gr" "hk" "hu" "ie" "il" "it" "jp" "lv" "lu" "md" "nl" "nz" "no" "pl" "ro" "rs" "sg" "es" "se" "ch" "gb" "ae" "us")
 
 # Concatenate favorite and country arrays
-VPN_CODES=("${VPN_LOCATIONS[@]}")
-VPN_CODES+=("${COUNTRY_CODES[@]}")
+VPN_CODES=("${COUNTRY_CODES[@]}")
 VPN_LOCATIONS+=("${COUNTRIES[@]}")
 
 
@@ -122,13 +112,19 @@ vpn_location_menu() {
 
 	if hash rofi 2>/dev/null; then
 
-		## shellcheck throws errors here, but the globbing is intentional
-		# shellcheck disable=SC2086
-		MENU="$(rofi \
+	    menu_content="(dis)connect|"
+
+	    for (( i=0; i<${#VPN_LOCATIONS[@]}; i++ ));
+	    do
+		menu_content="${menu_content}${VPN_LOCATIONS[$i]}|"
+	    done
+
+	    ## shellcheck throws errors here, but the globbing is intentional
+	    # shellcheck disable=SC2086
+	    MENU="$(rofi \
 			-columns 1 -width 10 -hide-scrollbar \
 			-line-padding 4 -padding 20 -lines 9 \
-			-sep "|" -dmenu -i -p "$rofi_menu_name" <<< \
-			" $icon_connect (dis)connect| $icon_fav ${VPN_LOCATIONS[0]}| $icon_fav ${VPN_LOCATIONS[1]}| $icon_fav ${VPN_LOCATIONS[2]}| $icon_fav ${VPN_LOCATIONS[3]}| $icon_fav ${VPN_LOCATIONS[4]}| $icon_fav ${VPN_LOCATIONS[5]}| $icon_fav ${VPN_LOCATIONS[6]}| $icon_fav ${VPN_LOCATIONS[7]}| $icon_country ${VPN_LOCATIONS[8]}| $icon_country ${VPN_LOCATIONS[9]}| $icon_country ${VPN_LOCATIONS[10]}| $icon_country ${VPN_LOCATIONS[11]}| $icon_country ${VPN_LOCATIONS[12]}| $icon_country ${VPN_LOCATIONS[13]}| $icon_country ${VPN_LOCATIONS[14]}| $icon_country ${VPN_LOCATIONS[15]}| $icon_country ${VPN_LOCATIONS[16]}| $icon_country ${VPN_LOCATIONS[17]}| $icon_country ${VPN_LOCATIONS[18]}| $icon_country ${VPN_LOCATIONS[19]}| $icon_country ${VPN_LOCATIONS[20]}| $icon_country ${VPN_LOCATIONS[21]}| $icon_country ${VPN_LOCATIONS[22]}| $icon_country ${VPN_LOCATIONS[23]}| $icon_country ${VPN_LOCATIONS[24]}| $icon_country ${VPN_LOCATIONS[25]}| $icon_country ${VPN_LOCATIONS[26]}| $icon_country ${VPN_LOCATIONS[27]}| $icon_country ${VPN_LOCATIONS[28]}| $icon_country ${VPN_LOCATIONS[29]}| $icon_country ${VPN_LOCATIONS[30]}| $icon_country ${VPN_LOCATIONS[31]}| $icon_country ${VPN_LOCATIONS[32]}| $icon_country ${VPN_LOCATIONS[33]}| $icon_country ${VPN_LOCATIONS[34]}| $icon_country ${VPN_LOCATIONS[35]}| $icon_country ${VPN_LOCATIONS[36]}| $icon_country ${VPN_LOCATIONS[37]}| $icon_country ${VPN_LOCATIONS[38]}| $icon_country ${VPN_LOCATIONS[39]}| $icon_country ${VPN_LOCATIONS[40]}| $icon_country ${VPN_LOCATIONS[41]}| $icon_country ${VPN_LOCATIONS[42]}| $icon_country ${VPN_LOCATIONS[43]}")"
+			-sep "|" -dmenu -i -p "$rofi_menu_name" <<< ${menu_content})"
 
 
 		# shellcheck disable=SC2086
