@@ -44,10 +44,6 @@ VPN_STATUS="$($VPN_GET_STATUS | grep -Eio 'connected|connecting|disconnected' \
 CONNECTED="connected"
 CONNECTING="connecting"
 
-## [Set optional rofi menu style]. `man rofi` for help.
-icon_connect=""
-icon_fav=""
-icon_country=""
 rofi_menu_name="$VPN_PROVIDER VPN"
 
 
@@ -119,9 +115,9 @@ vpn_location_menu() {
 		menu_content="${menu_content}${VPN_LOCATIONS[$i]}|"
 	    done
 
-	    ## shellcheck throws errors here, but the globbing is intentional
-	    # shellcheck disable=SC2086
-	    MENU="$(rofi \
+		## shellcheck throws errors here, but the globbing is intentional
+		# shellcheck disable=SC2086
+		MENU="$(rofi \
 			-columns 1 -width 10 -hide-scrollbar \
 			-line-padding 4 -padding 20 -lines 9 \
 			-sep "|" -dmenu -i -p "$rofi_menu_name" <<< ${menu_content})"
