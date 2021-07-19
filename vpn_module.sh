@@ -68,7 +68,7 @@ vpn_report() {
 	    echo "${ipv4} - ${location}"
 	    
 	elif [ "$VPN_STATUS" = "$CONNECTING" ]; then
-		echo "Connecting..."
+		echo "Connecting…"
 	else
 		echo "Disconnected"
 	fi
