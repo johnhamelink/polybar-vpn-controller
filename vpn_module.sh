@@ -33,7 +33,7 @@
 VPN_PROVIDER="Mullvad"
 VPN_CONNECT="mullvad connect"
 VPN_DISCONNECT="mullvad disconnect"
-VPN_GET_STATUS="mullvad status"
+VPN_GET_STATUS="mullvad status -l"
 VPN_RELAY_SET_LOCATION="mullvad relay set location"
 
 ## [Set VPN status parsing]
@@ -59,32 +59,14 @@ COUNTRY_CODES=("al" "au" "at" "be" "br" "bg" "ca" "cz" "dk" "fi" "fr" "de" "gr" 
 VPN_CODES=("${COUNTRY_CODES[@]}")
 VPN_LOCATIONS+=("${COUNTRIES[@]}")
 
-
-ip_address_lookup() {
-	ip_address=$($VPN_GET_STATUS | \
-		awk 'match($0,/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/){print substr($0,RSTART,RLENGTH)}')
-	if [ -z "$ip_address" ]; then
-		ip_address=$(curl --silent https://ipaddr.pub)
-	fi
-	echo "$ip_address"
-}
-
-
 vpn_report() {
 # continually reports connection status
 	if [ "$VPN_STATUS" = "$CONNECTED"  ]; then
-		if [ "$@" ] && [ "$1" == "--no-geoip" ]; then
-			country=$($VPN_GET_STATUS | awk 'tolower ($0) ~ /country/{print $2}')
-			city=$($VPN_GET_STATUS | awk 'tolower ($0) ~ /country/{print $2}')
-			echo "$city $country"
-		elif hash geoiplookup 2>/dev/null; then
-			ip_address=$(ip_address_lookup)
-			country=$(geoiplookup "$ip_address" | head -n1 | cut -c24-25)
-			city=$(geoiplookup "$ip_address" | cut -d',' -f5 | sed -n '2{p;q}' | sed 's/^ //')
-			echo "${city} ${country}"
-		else
-			ip_address_lookup
-		fi
+	    location="$(mullvad status -l | awk 'tolower ($0) ~ /location/{for (i=2; i<NF; i++) printf $i " "; print $NF}')"
+	    ipv4="$(mullvad status -l | awk 'tolower ($0) ~ /ipv4/{for (i=2; i<NF; i++) printf $i " "; print $NF}')"
+
+	    echo "${ipv4} - ${location}"
+	    
 	elif [ "$VPN_STATUS" = "$CONNECTING" ]; then
 		echo "Connecting..."
 	else
@@ -101,7 +83,6 @@ vpn_toggle_connection() {
         $VPN_CONNECT
     fi
 }
-
 
 vpn_location_menu() {
 # Allows control of VPN via rofi menu. Selects from VPN_LOCATIONS.
@@ -179,19 +160,9 @@ vpn_location_menu() {
 	fi
 }
 
-
-ip_address_to_clipboard() {
-# finds your IP and copies to clipboard
-	ip_address=$(ip_address_lookup)
-	echo "$ip_address" | xclip -selection clipboard
-}
-
-
 # cases for polybar user_module.ini
 case "$1" in
 	--toggle-connection) vpn_toggle_connection ;;
 	--location-menu) vpn_location_menu ;;
-	--ip-address) ip_address_to_clipboard ;;
-	--no-geoip) vpn_report --no-geoip ;;
 	*) vpn_report ;;
 esac
