@@ -3,6 +3,7 @@
 ## @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ## vpn_module: vpn scripts for a polybar, setup stock for Mullvad VPN
 ## 	by Shervin S. (shervin@tuta.io)
+##      improved & modified by John Hamleink (me@johnhame.link)
 
 ## 	vpn_module reports your VPN's status as [<ip_address> | connecting... | No VPN ].
 ##  With optional dependencies, <ip_address> will be replaced with <city> <country>.
@@ -15,9 +16,6 @@
 
 ##	optional dependencies:
 ##		rofi 				  - allows menu-based control of mullvad
-##		geoip, geoip-database - provide country instead of public ip address
-## 		geoip-database-extra  - also provides city info
-##      xclip                 - allows copying ip address to clipboard
 
 ## polybar setup:
 ## - Append contents of vpn_user_module file to user_modules.ini
